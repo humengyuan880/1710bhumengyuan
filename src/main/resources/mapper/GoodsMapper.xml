@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间 namespace 全球唯一 包 -->
+<mapper namespace="com.humengyuan.mapper.GoodsMapper">
+	<!-- 查询所有 -->
+	<resultMap type="com.humengyuan.bean.Tb_goods" id="goodsaa">
+		<id column="gid" property="gid" />
+		<result column="gname" property="gname" />
+		<result column="size" property="size" />
+		<result column="price" property="price" />
+		<result column="count" property="count" />
+		<result column="biaoq" property="biaoq" />
+		<result column="img" property="img" />
+		<result column="xx" property="xx" />
+
+		<association property="brand" javaType="com.humengyuan.bean.Tb_brand">
+			<id column="bid" property="bid" />
+			<result column="bname" property="bname" />
+			<result column="sid" property="sid" />
+		</association>
+	</resultMap>
+	<select id="list" parameterType="map" resultMap="goodsaa">
+		SELECT
+		g.*,b.bname FROM tb_goods g JOIN tb_brand b ON g.bid=b.bid where
+		g.xx=0
+	</select>
+
+	<!-- 添加 -->
+	<insert id="addGoods" parameterType="com.humengyuan.bean.Tb_goods">
+		insert
+		Tb_goods(gname,size,price,count,biaoq,img,bid,xx)
+		values(#{gname},#{size},#{price},#{count},#{biaoq},#{img},#{brand.bid},0)
+	</insert>
+	<!--复选框查询 -->
+	<select id="xuan1" resultType="com.humengyuan.bean.Tb_brand">
+		select * from Tb_brand
+	</select>
+	<select id="xuan2" resultType="com.humengyuan.bean.Tb_goodskind">
+		select * from Tb_goodskind
+	</select>
+	<delete id="dels" parameterType="map">
+		update tb_goods set xx=1
+		<where>
+			<foreach open="gid in  (" collection="ids" close=")"
+				separator="," item="aa">
+				#{aa}
+			</foreach>
+		</where>
+		<!-- update tb_goods set xx=1 <where> <if test="ids!=null and ids.length>0"> 
+			<foreach open="gid in (" collection="ids" close=")" separator="," item="aa"> 
+			#{aa} </foreach> </if> </where> -->
+	</delete>
+</mapper>
